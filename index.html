@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0d0d" />
+    <meta name="description" content="字生万象：以粒子、文字与交互讲述汉字的流动记忆。" />
+    <title>字生万象 / A living archive of Chinese characters</title>
+    <style>
+      @font-face { font-family: Outfit; src: url('assets/outfit-regular.ttf') format('truetype'); font-style: normal; font-weight: 400; font-display: swap; }
+      @font-face { font-family: Outfit; src: url('assets/outfit-semibold.ttf') format('truetype'); font-style: normal; font-weight: 600; font-display: swap; }
+
+      :root {
+        --ink: #090c0c;
+        --paper: #f2eadb;
+        --paper-soft: #d9d0be;
+        --jade: #7da99c;
+        --jade-deep: #3f625d;
+        --vermilion: #df5b42;
+        --amber: #efb866;
+        --line: rgba(242, 234, 219, 0.16);
+        --muted: rgba(242, 234, 219, 0.62);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; background: var(--ink); }
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "Outfit", "Microsoft YaHei", sans-serif;
+        overflow-x: hidden;
+      }
+      a { color: inherit; text-decoration: none; }
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+      button:disabled, input:disabled { opacity: .45; cursor: wait; }
+      a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 5px; }
+      section, #lab { scroll-margin-top: 108px; }
+      main { width: 100%; max-width: 100%; overflow-x: hidden; }
+
+      .noise {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.06;
+        z-index: 20;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+        mix-blend-mode: screen;
+      }
+      .shell { width: min(1380px, calc(100% - 64px)); margin: 0 auto; }
+
+      nav {
+        position: fixed;
+        top: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 30;
+        width: min(1380px, calc(100% - 64px));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 13px 16px 13px 20px;
+        border: 1px solid var(--line);
+        background: rgba(9, 12, 12, 0.78);
+        backdrop-filter: blur(18px);
+      }
+      .brand { display: flex; align-items: center; gap: 12px; font-size: 14px; letter-spacing: .08em; }
+      .brand-mark { width: 11px; height: 11px; background: var(--vermilion); border-radius: 50%; box-shadow: 0 0 22px rgba(223, 91, 66, .9); }
+      .nav-links { display: flex; gap: 27px; color: var(--muted); font-size: 12px; letter-spacing: .09em; text-transform: uppercase; }
+      .nav-links a { transition: color .3s ease; }
+      .nav-links a:hover { color: var(--paper); }
+      .nav-action { padding: 9px 13px; color: var(--ink); background: var(--amber); font-size: 12px; font-weight: 700; letter-spacing: .06em; }
+
+      .hero { min-height: 100svh; display: grid; align-items: center; padding: 170px 0 130px; position: relative; }
+      .hero-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(440px, 1.15fr); gap: clamp(44px, 8vw, 140px); align-items: center; }
+      .eyebrow { color: var(--amber); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 26px; }
+      h1 { max-width: 760px; margin: 0; font-size: clamp(3.4rem, 6.8vw, 7.5rem); line-height: 1.15; letter-spacing: -.055em; font-weight: 500; }
+      h1 em { font-family: "Noto Serif SC", "SimSun", serif; font-style: normal; color: var(--paper-soft); letter-spacing: -.055em; }
+      .inline-image { display: inline-block; width: clamp(80px, 9vw, 130px); height: clamp(48px, 6vw, 84px); margin: 0 .12em; vertical-align: .13em; border-radius: 100px; background-image: url('assets/light.svg'); background-size: cover; background-position: center; border: 1px solid var(--line); }
+      .hero-copy { max-width: 590px; margin-top: 32px; color: var(--muted); font-size: 17px; line-height: 1.75; }
+      .hero-copy strong { color: var(--paper); font-weight: 500; }
+      .hero-cta { display: flex; gap: 12px; margin-top: 42px; }
+      .button { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); padding: 13px 16px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; transition: transform .35s ease, background .35s ease, color .35s ease; }
+      .button:hover { transform: translateY(-3px); }
+      .button-primary { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+      .button-secondary { color: var(--paper); }
+
+      .canvas-wrap { position: relative; min-height: 570px; border: 1px solid var(--line); overflow: hidden; background: radial-gradient(circle at 56% 44%, rgba(79, 120, 112, .34), transparent 35%), radial-gradient(circle at 74% 62%, rgba(223, 91, 66, .18), transparent 30%), #070a0a; }
+      .canvas-wrap::before { content: ""; position: absolute; inset: 18px; border: 1px solid rgba(242,234,219,.12); pointer-events: none; }
+      #particle-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .canvas-meta { position: absolute; left: 28px; bottom: 24px; right: 28px; display: flex; justify-content: space-between; align-items: end; color: var(--muted); font-size: 11px; letter-spacing: .13em; text-transform: uppercase; }
+      .canvas-meta strong { display: block; color: var(--paper); margin-top: 8px; font-size: 17px; letter-spacing: .02em; text-transform: none; font-weight: 500; }
+      .canvas-controls { display: flex; gap: 7px; }
+      .icon-button { width: 37px; height: 37px; display: grid; place-items: center; border: 1px solid var(--line); background: rgba(9,12,12,.7); color: var(--paper); cursor: pointer; }
+      .icon-button:hover { border-color: var(--amber); color: var(--amber); }
+      .canvas-topline { position: absolute; inset: 28px 28px auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 1; }
+      .canvas-hint { color: var(--muted); font-size: 11px; letter-spacing: .08em; }
+      .scene-tabs { display: flex; gap: 6px; }
+      .scene-tab { width: 30px; height: 30px; border: 1px solid var(--line); color: var(--paper-soft); background: var(--ink); }
+      .scene-tab[aria-pressed="true"] { color: var(--ink); background: var(--amber); border-color: var(--amber); }
+      .studio-tools { margin-top: 16px; display: grid; gap: 12px; }
+      .word-form { display: flex; gap: 8px; }
+      .word-form input { width: 100%; min-width: 0; padding: 12px 14px; color: var(--paper); border: 1px solid var(--line); background: #0d1312; border-radius: 0; }
+      .word-form .button { flex-shrink: 0; background: var(--paper); color: var(--ink); }
+      .tool-row { display: flex; flex-wrap: wrap; gap: 8px; }
+      .tool-row .button { background: transparent; color: var(--paper-soft); font-size: 11px; padding: 10px 12px; }
+      .studio-status { margin: 0; min-height: 20px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+      .canvas-wrap:fullscreen { width: 100vw; height: 100vh; border: 0; }
+      #particle-canvas { touch-action: pan-y; }
+
+      .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; white-space: nowrap; color: var(--paper-soft); }
+      .marquee-track { display: inline-flex; gap: 35px; padding: 22px 0; font-family: "Noto Serif SC", serif; font-size: 18px; animation: marquee 22s linear infinite; }
+      .marquee-track span:nth-child(3n) { color: var(--vermilion); }
+      @keyframes marquee { to { transform: translateX(-50%); } }
+
+      .section { padding: 180px 0; }
+      .section-head { display: flex; justify-content: space-between; gap: 40px; align-items: end; margin-bottom: 60px; }
+      .section-title { max-width: 720px; margin: 0; font-size: clamp(2.6rem, 5vw, 5.6rem); line-height: 1.15; letter-spacing: -.065em; font-weight: 500; }
+      .section-intro { max-width: 330px; color: var(--muted); line-height: 1.7; font-size: 14px; }
+
+      .bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: dense; gap: 12px; }
+      .bento-card { min-height: 310px; position: relative; overflow: hidden; border: 1px solid var(--line); background: #101615; padding: 26px; display: flex; flex-direction: column; justify-content: space-between; transition: transform .55s cubic-bezier(.22,1,.36,1), border-color .35s ease; }
+      .bento-card:hover { transform: translateY(-8px); border-color: rgba(239,184,102,.58); }
+      .bento-card:nth-child(1) { grid-column: span 5; }
+      .bento-card:nth-child(2) { grid-column: span 4; }
+      .bento-card:nth-child(3) { grid-column: span 3; }
+      .bento-card:nth-child(4), .bento-card:nth-child(5), .bento-card:nth-child(6) { grid-column: span 4; }
+      .bento-card-image { min-height: 330px; background-size: cover; background-position: center; }
+      .bento-card-image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,12,12,.08), rgba(9,12,12,.88)); }
+      .bento-card > * { position: relative; z-index: 1; }
+      .card-title { max-width: 320px; font-family: "Noto Serif SC", serif; font-size: 29px; line-height: 1.15; }
+      .card-text { max-width: 290px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+      .card-foot { display: flex; justify-content: space-between; gap: 20px; align-items: end; color: var(--paper-soft); font-size: 11px; letter-spacing: .08em; }
+      .card-number { color: var(--amber); font-size: 30px; letter-spacing: -.04em; }
+
+      .story { position: relative; display: grid; grid-template-columns: .6fr 1.4fr; gap: 9vw; align-items: start; }
+      .story-rail { position: relative; }
+      .story-sticky { min-height: 70vh; display: flex; flex-direction: column; justify-content: center; }
+      .story-sticky h2 { max-width: 420px; margin: 0; font-family: "Noto Serif SC", serif; font-size: clamp(3rem, 5.5vw, 6.5rem); line-height: .92; letter-spacing: -.08em; font-weight: 500; }
+      .story-sticky p { max-width: 300px; margin-top: 24px; color: var(--muted); line-height: 1.7; }
+      .story-scene { min-height: 88vh; display: grid; grid-template-columns: 1fr; align-content: center; border-top: 1px solid var(--line); position: relative; }
+      .story-scene:first-child { border-top: 0; }
+      .scene-image { height: min(60vh, 580px); background-size: cover; background-position: center; filter: saturate(.72) contrast(1.1); position: relative; overflow: hidden; }
+      .scene-image::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 60% 50%, transparent 0, rgba(9,12,12,.22) 45%, rgba(9,12,12,.8) 100%); }
+      .scene-copy { display: flex; justify-content: space-between; align-items: start; gap: 30px; padding-top: 24px; }
+      .scene-copy h3 { margin: 0; max-width: 480px; font-family: "Noto Serif SC", "SimSun", serif; font-size: clamp(2rem, 3.8vw, 4.2rem); line-height: 1.25; font-weight: 500; }
+      .scene-copy p { max-width: 240px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+      .manifesto { padding: 100px 0 20px; border-top: 1px solid var(--line); }
+      .manifesto p { max-width: 1200px; margin: 0; font-family: "Noto Serif SC", serif; font-size: clamp(2.6rem, 6vw, 7rem); line-height: 1.04; letter-spacing: -.08em; }
+      .word { display: inline-block; opacity: .18; }
+      .word.active { color: var(--amber); }
+
+      .quote-panel { display: grid; grid-template-columns: 1.2fr .8fr; gap: 15vw; align-items: end; padding-top: 40px; }
+      .quote { margin: 0; max-width: 800px; font-family: "Noto Serif SC", "SimSun", serif; font-size: clamp(2.4rem, 4.6vw, 5.4rem); line-height: 1.3; letter-spacing: -.05em; }
+      .quote-meta { border-left: 1px solid var(--line); padding-left: 22px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+      .quote-controls { display: flex; gap: 8px; margin-top: 28px; }
+
+      .action { padding: 150px 0 100px; }
+      .action-inner { padding: clamp(34px, 6vw, 90px); background: var(--amber); color: var(--ink); position: relative; overflow: hidden; }
+      .action-inner::before { content: "字"; position: absolute; right: -3vw; top: -10vw; font-family: "Noto Serif SC", serif; font-size: min(50vw, 680px); line-height: 1; color: rgba(9,12,12,.08); }
+      .action-inner > * { position: relative; z-index: 1; }
+      .action-title { max-width: 920px; margin: 0; font-size: clamp(3.2rem, 7.5vw, 9rem); line-height: 1.14; letter-spacing: -.06em; font-weight: 500; }
+      .action-row { display: flex; justify-content: space-between; gap: 35px; align-items: end; margin-top: 80px; }
+      .action-row p { max-width: 340px; margin: 0; font-size: 15px; line-height: 1.6; }
+      .action-row .button { border-color: var(--ink); color: var(--ink); }
+      .action-row .button:hover { background: var(--ink); color: var(--amber); }
+
+      footer { padding: 34px 0 45px; color: var(--muted); font-size: 12px; }
+      .footer-row { display: flex; justify-content: space-between; gap: 30px; border-top: 1px solid var(--line); padding-top: 20px; }
+      .footer-links { display: flex; gap: 22px; }
+
+      @media (max-width: 900px) {
+        .shell, nav { width: min(100% - 32px, 680px); }
+        nav { top: 12px; }
+        .nav-links { display: none; }
+        .hero { padding-top: 130px; }
+        .hero-grid, .story, .quote-panel { grid-template-columns: 1fr; gap: 55px; }
+        .canvas-wrap { min-height: 460px; }
+        .section { padding: 110px 0; }
+        .section-head { display: block; }
+        .section-intro { margin-top: 22px; }
+        .bento-card, .bento-card:nth-child(n) { grid-column: span 12; min-height: 280px; }
+        .story-sticky { min-height: auto; }
+        .story-scene { min-height: auto; padding: 50px 0; }
+        .scene-copy, .action-row, .footer-row { display: block; }
+        .scene-copy p, .action-row p { margin-top: 18px; }
+        .action-row .button { margin-top: 27px; }
+      }
+      @media (max-width: 480px) {
+        h1 { font-size: 68px; }
+        .eyebrow { font-size: 9px; letter-spacing: .12em; }
+        .canvas-wrap { min-height: 420px; }
+        .canvas-topline { inset: 25px 25px auto; }
+        .canvas-hint { font-size: 10px; }
+        .canvas-meta { left: 25px; right: 25px; }
+        .canvas-controls { gap: 5px; }
+        .section-title { font-size: 39px; }
+        .hero-cta { gap: 8px; }
+        .button { padding: 12px; }
+        .footer-links { margin-top: 18px; flex-wrap: wrap; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after { animation: none !important; transition: none !important; }
+        .word { opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="noise"></div>
+    <nav>
+      <a class="brand" href="#top"><span class="brand-mark"></span><span>字生万象</span></a>
+      <div class="nav-links"><a href="#archive">光的笔画</a><a href="#story">字中故事</a><a href="#method">创作手记</a></div>
+      <a class="nav-action" href="#lab">进入体验</a>
+    </nav>
+
+    <main id="top">
+      <section class="hero shell">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">CHINESE CHARACTERS, REIMAGINED IN LIGHT</div>
+            <h1>一字<span class="inline-image" aria-hidden="true"></span><br /><em>生万象。</em></h1>
+            <p class="hero-copy">从「火」的温度，到「家」的牵挂。<strong>移近光点，让笔画散开</strong>，再看一个字慢慢聚拢。</p>
+            <div class="hero-cta"><a class="button button-primary" href="#lab">写下你的字 <span>↘</span></a><a class="button button-secondary" href="#story">读字中故事</a></div>
+          </div>
+          <div class="studio">
+          <div class="canvas-wrap" id="lab">
+            <canvas id="particle-canvas" aria-label="汉字粒子互动实验">你的浏览器暂不支持 Canvas。请使用新版 Edge、Chrome 或 Firefox。</canvas>
+            <div class="canvas-topline"><span class="canvas-hint">移近光点 · 看它重新聚拢</span><div class="scene-tabs" role="group" aria-label="选择字形"><button class="scene-tab" data-scene="0" aria-pressed="true">火</button><button class="scene-tab" data-scene="1" aria-pressed="false">明</button><button class="scene-tab" data-scene="2" aria-pressed="false">家</button></div></div>
+            <div class="canvas-meta"><div><span>粒子实验 / 当前字形</span><strong id="scene-name">火</strong></div><div class="canvas-controls"><button class="icon-button" id="pause" aria-label="暂停动画">Ⅱ</button><button class="icon-button" id="next" aria-label="下一个字形">→</button></div></div>
+          </div>
+          <div class="studio-tools">
+            <form id="word-form" class="word-form"><label class="sr-only" for="custom-word">输入一至四个汉字</label><input id="custom-word" type="text" maxlength="8" autocomplete="off" placeholder="写一个对你有意义的字（1—4 字）" aria-describedby="studio-status" /><button class="button" type="submit">化作光点</button></form>
+            <div class="tool-row"><button class="button" id="export-card" type="button">保存字形卡 ↓</button><button class="button" id="auto-play" type="button" aria-pressed="false">连续演绎</button><button class="button" id="record-video" type="button">录制 16 秒短片</button><button class="button" id="fullscreen" type="button">全屏欣赏</button></div>
+            <p class="studio-status" id="studio-status" role="status">当前：火。可以用鼠标、手指或上方按钮探索。</p>
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="marquee" aria-label="项目关键词"><div class="marquee-track"><span>字形采样</span><span>文化记忆</span><span>粒子书写</span><span>交互叙事</span><span>人工智能辅助创作</span><span>字形采样</span><span>文化记忆</span><span>粒子书写</span><span>交互叙事</span><span>人工智能辅助创作</span></div></div>
+
+      <section class="section shell" id="archive">
+        <div class="section-head"><h2 class="section-title">在笔画之间，<br />看见生活。</h2><p class="section-intro">火是温度，明是相遇，家是归处。三个熟悉的汉字，成为这次粒子书写的起点。</p></div>
+        <div class="bento">
+          <article class="bento-card bento-card-image" style="background-image:url('assets/fire.svg')"><div><div class="card-number">火</div><h3 class="card-title">一簇光，<br />也是一份温度。</h3></div><div class="card-foot"><span>聚拢 · 散开</span><a href="#lab">去触碰 ↗</a></div></article>
+          <article class="bento-card"><div><div class="card-number">触</div><h3 class="card-title">笔画会回应你</h3></div><p class="card-text">移近光点，笔画暂时散开；离开之后，光点缓缓回到原处。一遍阅读，也可以成为一次书写。</p><div class="card-foot"><span>鼠标或触屏</span><a href="#lab">开始体验 ↗</a></div></article>
+          <article class="bento-card bento-card-image" style="background-image:url('assets/light.svg')"><div><div class="card-number">明</div><h3 class="card-title">两束光，<br />在这里相遇。</h3></div><div class="card-foot"><span>暖金 · 青绿</span><span>相映成明</span></div></article>
+          <article class="bento-card bento-card-image" style="background-image:url('assets/home.svg')"><div><div class="card-number">家</div><h3 class="card-title">屋檐之下，<br />有人等你。</h3></div><p class="card-text">把心里的牵挂写进一个字。光点散落之后，总有一个地方可以回去。</p></article>
+          <article class="bento-card"><div><div class="card-number">演</div><h3 class="card-title">看文字依次点亮</h3></div><p class="card-text">打开连续演绎，火、明、家与「字生万象」会依次出现。也可以暂停，留住你喜欢的那一刻。</p><div class="card-foot"><a href="#lab">回到粒子舞台 ↗</a></div></article>
+          <article class="bento-card"><div><div class="card-number">留</div><h3 class="card-title">留下你的字</h3></div><p class="card-text">写下名字、故乡或一句简短的祝愿。保存字形卡，将此刻的光点带走。</p><div class="card-foot"><a href="#lab">写字并保存 ↗</a></div></article>
+        </div>
+      </section>
+
+      <section class="section shell" id="story">
+        <div class="story">
+          <div class="story-rail"><div class="story-sticky"><h2>一字<br />一世界。</h2><p>从一簇火，到一扇亮着的窗。顺着文字，回到熟悉的生活。</p></div></div>
+          <div>
+            <article class="story-scene"><div class="scene-image" role="img" aria-label="由细线聚成的抽象火焰" style="background-image:url('assets/fire.svg')"></div><div class="scene-copy"><h3>火，有了温度。</h3><p>灶间的一点火，夜路上的一盏灯。我们用暖色光点，写下人与火的亲近。</p></div></article>
+            <article class="story-scene"><div class="scene-image" role="img" aria-label="太阳与月牙在细线轨道中相遇" style="background-image:url('assets/light.svg')"></div><div class="scene-copy"><h3>明，让彼此看见。</h3><p>日光和月色在同一幅画里相遇。在这里，「明」是一种关于陪伴的视觉想象。</p></div></article>
+            <article class="story-scene"><div class="scene-image" role="img" aria-label="层叠屋檐下亮着的一点灯光" style="background-image:url('assets/home.svg')"></div><div class="scene-copy"><h3>家，是光的归处。</h3><p>从四散的光点，到完整的笔画。最后一次聚拢，留给每个人心里那个想回去的地方。</p></div></article>
+          </div>
+        </div>
+        <div class="manifesto" id="method"><p><span class="word">保存</span> <span class="word">形状，</span><span class="word">释放</span> <span class="word">记忆，</span><span class="word">让每一次</span> <span class="word active">触碰</span> <span class="word">都成为</span> <span class="word active">新的书写。</span></p></div>
+      </section>
+
+      <section class="section shell" aria-label="创作回声">
+        <div class="section-head"><h2 class="section-title">写在作品背后。</h2><p class="section-intro">本作以现代字体和原创程序图形展开视觉联想。画面属于艺术表达，不作为古文字演变或历史复原的证据。</p></div>
+        <div class="quote-panel"><blockquote class="quote" id="quote">“把熟悉的字拆成光点，再让它回到你面前。”</blockquote><div class="quote-meta"><div id="quote-author">创作手记 / 粒子书写</div><div class="quote-controls"><button class="icon-button" id="prev-quote" aria-label="上一条">←</button><button class="icon-button" id="next-quote" aria-label="下一条">→</button></div></div></div>
+      </section>
+
+      <section class="action shell" id="submit"><div class="action-inner"><h2 class="action-title">哪一个字，<br />让你想起家？</h2><div class="action-row"><p>一个名字，一座城，一份牵挂。把它写进光里，留下一张属于你的字形卡。</p><a class="button" href="#lab">写下你的字 <span>↗</span></a></div></div></section>
+    </main>
+
+    <footer class="shell"><div class="footer-row"><span>字生万象 / 互动原型 v0.2</span><div class="footer-links"><a href="#top">回到顶部</a><a href="competition/AI_DISCLOSURE.md">AI 创作说明</a><a href="competition/PLAN.md">参赛计划</a><span>2026</span></div></div></footer>
+
+    <script src="vendor/gsap.min.js" defer></script>
+    <script src="vendor/ScrollTrigger.min.js" defer></script>
+    <script src="app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#131c24">
+  <meta name="description" content="长征翻雪山三维场景基准样片。滚动页面，沿 Blender 制作的镜头路径走近雪山中的行军队伍。">
+  <title>雪线之上 · 长征雪山场景</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23131c24'/%3E%3Cpath d='M6 48 24 16 35 34 43 25 59 48Z' fill='%23d5dedf'/%3E%3Cpath d='M25 15v19l12-6-12-5' stroke='%239c3938' fill='%239c3938'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#controls">跳至镜头控制</a>
+  <div class="experience" role="region" aria-label="长征翻雪山三维场景样片">
+    <canvas id="scene" aria-label="由 Blender 渲染的雪山行军场景，滚动可控制镜头前进与后退"></canvas>
+    <canvas id="atmosphere" aria-hidden="true"></canvas>
+    <div class="scene-shade" aria-hidden="true"></div>
+    <header class="masthead">
+      <a href="#" class="wordmark" aria-label="百年行军，回到开始"><span class="brand-mark" aria-hidden="true"></span>百年行军<span class="brand-date">1927—2027</span></a>
+      <div class="chapter-mark"><span>长征</span><i aria-hidden="true"></i><span>雪山</span></div>
+      <button type="button" class="text-button production-button" aria-expanded="false" aria-controls="production">制作手记 <span aria-hidden="true">＋</span></button>
+    </header>
+
+    <div class="year-mark" aria-hidden="true"><span>一九三五</span><div></div><small>1935</small></div>
+    <div class="caption-stage" id="captions" aria-live="off">
+      <article class="caption active"><p class="eyebrow">长征 · 翻越雪山</p><h1>雪线之上</h1><p class="history">沿着行军队伍的方向，走进雪山中的历史记忆。</p></article>
+    </div>
+    <div class="interaction-hint"><span class="scroll-symbol" aria-hidden="true"></span><span>向下滚动，走近这段历史</span></div>
+
+    <aside id="production" class="production-panel" aria-label="制作手记" hidden>
+      <div class="panel-heading"><h2>这一镜，如何生成</h2><button type="button" class="close-button" aria-label="关闭制作手记">×</button></div>
+      <p>雪山、队伍、旗帜、灯光与镜头路径在 Blender 中制作。网页随滚轮读取渲染帧，再叠加少量实时雪点与文字。</p>
+      <p>镜头沿预先制作的路径前后移动。本次样片用于检验空间、构图与滚动手感；不支持自由环绕，不代表历史现场的精确复原。</p>
+      <label class="setting" for="snow-level"><span>前景雪点</span><output id="snow-value" for="snow-level">22%</output></label>
+      <input id="snow-level" type="range" min="0" max="100" value="22" aria-label="前景雪点强度">
+      <div class="particle-mode" role="group" aria-label="浏览器粒子叠加模式">
+        <span>浏览器叠加</span>
+        <button type="button" id="dots-toggle" aria-pressed="true"><span class="mode-dot" aria-hidden="true"></span><span id="dots-label">点描粒子：开</span></button>
+      </div>
+      <p id="motion-note" class="small-note">开启系统“减少动态效果”后，镜头直接跟随进度，雪点与自动演绎关闭。</p>
+      <details class="sources"><summary>历史资料与创作边界</summary><p>画面中的人物、地形和行军路径是概括性的艺术表达。文字史实以所列资料为依据。</p><ul id="history-sources"></ul></details>
+      <p class="render-info" id="render-info">正在读取场景信息</p>
+    </aside>
+
+    <footer class="transport" id="controls" tabindex="-1" aria-label="镜头控制">
+      <div class="transport-top">
+        <div class="scene-positions" role="group" aria-label="镜头位置">
+          <button type="button" data-position="0" aria-current="true"><span class="position-dot" aria-hidden="true"></span>远望</button>
+          <button type="button" data-position="0.32"><span class="position-dot" aria-hidden="true"></span>靠近</button>
+          <button type="button" data-position="0.64"><span class="position-dot" aria-hidden="true"></span>同行</button>
+          <button type="button" data-position="1"><span class="position-dot" aria-hidden="true"></span>回望</button>
+        </div>
+        <button type="button" id="tour" class="tour-button" aria-pressed="false"><span class="play-symbol" aria-hidden="true"></span><span id="tour-label">自动演绎</span></button>
+      </div>
+      <label for="scene-progress" class="sr-only">镜头进度，可使用方向键微调</label>
+      <input id="scene-progress" class="scene-progress" type="range" min="0" max="1000" value="0" step="1" aria-valuetext="远望，0%">
+      <div class="transport-bottom"><span id="frame-status" role="status" aria-live="polite">正在装载雪山场景</span><span class="scroll-help">滚轮 / 触摸滑动 · 可往返</span><span class="progress-readout"><b id="progress-number">000</b><span>/ 100</span></span></div>
+    </footer>
+    <div class="loading-screen" id="loading" role="status" aria-live="polite"><p class="loading-kicker">长征 · 雪山</p><h2>雪线之上</h2><div class="loading-track"><span id="loading-fill"></span></div><p id="loading-message">正在装载第一束雪光</p><button id="retry" type="button" hidden>重新装载</button></div>
+  </div>
+  <main class="scroll-track" aria-label="滚动时间轴"><div class="sr-only"><h2>长征翻越雪山</h2><p>向下滚动，镜头前进；向上滚动，镜头回退。也可以使用页底的镜头进度、四个位置按钮或键盘方向键浏览。</p></div></main>
+  <noscript><div class="noscript">此样片需要 JavaScript 才能控制镜头。请启用 JavaScript，或直接打开 <a href="../assets/poster.jpg">雪山静帧</a>。</div></noscript>
+</body>
+</html>

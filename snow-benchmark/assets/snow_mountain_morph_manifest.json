@@ -1,0 +1,56 @@
+{
+  "pointCount": 262144,
+  "textureSize": "512x512",
+  "basePointCount": 261400,
+  "flagPointCount": 744,
+  "shapeCount": 5,
+  "shapeNames": [
+    "surface",
+    "breathing",
+    "ridgeCloud",
+    "disperse",
+    "return"
+  ],
+  "binary": "C:\\Users\\吕梓乔\\Documents\\ChatGPT\\数字新媒体比赛\\snow-benchmark\\assets\\snow_mountain_morph_points_512.bin",
+  "normalsBinary": "C:\\Users\\吕梓乔\\Documents\\ChatGPT\\数字新媒体比赛\\snow-benchmark\\assets\\snow_mountain_morph_normals_512.bin",
+  "normalCount": 262144,
+  "normalByteCount": 3145728,
+  "blend": "C:\\Users\\吕梓乔\\Documents\\ChatGPT\\数字新媒体比赛\\snow-benchmark\\blender\\snow_mountain_morph_particles_512.blend",
+  "render": "C:\\Users\\吕梓乔\\Documents\\ChatGPT\\数字新媒体比赛\\snow-benchmark\\renders\\morph_particle_sculpture_512.png",
+  "sourceTriangles": {
+    "rock": 95489,
+    "figures": 135042
+  },
+  "source": "C:\\Users\\吕梓乔\\Documents\\ChatGPT\\数字新媒体比赛\\snow-benchmark\\blender\\snow_mountain_sculpture.blend",
+  "colorPolicy": "cool gray-white body; vermilion only for flag role",
+  "binaryLayout": {
+    "endianness": "little",
+    "positionShapeCount": 5,
+    "positionFloatCount": 3932160,
+    "colorFloatOffset": 3932160,
+    "colorFloatCount": 1048576,
+    "phaseFloatOffset": 4980736,
+    "phaseFloatCount": 262144,
+    "roleByteOffset": 20971520,
+    "roleByteCount": 262144,
+    "roleValues": {
+      "rock": 0,
+      "figure": 1,
+      "flag": 2
+    }
+  },
+  "normalsBinaryLayout": {
+    "endianness": "little",
+    "coordinateSystem": "Blender world-space Z-up",
+    "componentOrder": [
+      "x",
+      "y",
+      "z"
+    ],
+    "floatType": "Float32",
+    "floatCount": 786432,
+    "byteCount": 3145728,
+    "recordStrideBytes": 12,
+    "recordOrder": "same as points, colors, phases, and role masks"
+  }
+}

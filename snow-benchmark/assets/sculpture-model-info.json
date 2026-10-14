@@ -1,0 +1,9 @@
+{
+  "sculptureMeshes": 109,
+  "sourceVertices": 116716,
+  "sourcePolygons": 167465,
+  "figuresModuleObjects": 420,
+  "backside": "inferred",
+  "referenceViews": "provided still plus video keyframes",
+  "glbProceduralBump": "not exported; matte material and real mesh geometry only"
+}

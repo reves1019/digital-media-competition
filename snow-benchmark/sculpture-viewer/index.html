@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#161a1b">
+  <meta name="description" content="雪山雕塑白膜版的实时 GLB 验收查看器。滚动镜头、自由查看与低干扰粒子叠加。">
+  <title>雪山雕塑 · 白膜验收</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <canvas id="viewport" aria-label="雪山翻越雕塑白膜版实时三维视图"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="wordmark" href="#top" aria-label="回到总览"><span class="mark" aria-hidden="true"></span><span>雪山雕塑</span><small>实时模型验收</small></a>
+      <div class="model-state" id="model-state" role="status" aria-live="polite"><i></i><span>等待 GLB</span></div>
+      <button class="quiet-button" id="production-info" type="button" aria-expanded="false" aria-controls="info-drawer">制作说明 <b aria-hidden="true">＋</b></button>
+    </header>
+
+    <aside id="info-drawer" class="info-drawer" hidden>
+      <div class="drawer-top"><h2>读模说明</h2><button type="button" class="close" id="close-info" aria-label="关闭制作说明">×</button></div>
+      <p>这是 Blender 导出的真实 GLB 白膜模型查看器。滚动模式沿预设相机路径观察长轴，切换“自由查看”后才启用轨道控制。</p>
+      <p class="fine">白膜主体始终保留。彩色粒子来自 512×512 固定索引 morph 场，沿五个 Blender 目标随滚动聚拢、流动与散出；“表面点云”是单独的轮廓验收视图。</p>
+      <label class="particle-setting" for="particle-strength"><span>彩色粒子强度</span><output id="particle-value" for="particle-strength">28%</output></label>
+      <input id="particle-strength" type="range" min="0" max="100" value="28" aria-label="彩色粒子强度">
+      <dl class="facts" id="model-facts"><div><dt>模型</dt><dd>尚未载入</dd></div><div><dt>几何</dt><dd>—</dd></div><div><dt>尺寸</dt><dd>—</dd></div></dl>
+    </aside>
+
+    <section class="title-block" aria-live="polite">
+      <p class="eyebrow"><span></span>长征 · 翻越雪山</p>
+      <h1>雪线之上</h1>
+      <p id="view-copy">总览雕塑的行军方向</p>
+    </section>
+    <div class="axis-note" aria-hidden="true"><span>Y</span><i></i><span>长轴</span></div>
+
+    <nav class="camera-nav" aria-label="镜头位置">
+      <div class="mode-switch" role="group" aria-label="查看模式">
+        <button type="button" class="mode active" data-mode="scroll" aria-pressed="true">滚动运镜</button>
+        <button type="button" class="mode" data-mode="free" aria-pressed="false">自由查看</button>
+      </div>
+      <div class="shot-list" role="group" aria-label="镜头热点">
+        <button type="button" class="shot active" data-progress="0" aria-current="true"><span>01</span>总览</button>
+        <button type="button" class="shot" data-progress="0.333" aria-current="false"><span>02</span>中段人物</button>
+        <button type="button" class="shot" data-progress="0.667" aria-current="false"><span>03</span>高脊</button>
+        <button type="button" class="shot" data-progress="1" aria-current="false"><span>04</span>回望</button>
+      </div>
+    </nav>
+
+    <div class="bottom-bar">
+      <div class="scroll-cue"><span class="mouse" aria-hidden="true"></span><span>滚动进入镜头 · 可往返</span></div>
+      <div class="display-tools" role="group" aria-label="显示选项">
+        <button type="button" id="particle-toggle" aria-pressed="true" disabled><i aria-hidden="true"></i><span>彩色粒子 · 开</span></button>
+        <button type="button" id="white-film-toggle" aria-pressed="true"><i aria-hidden="true"></i><span>白膜 · 开</span></button>
+        <button type="button" id="points-toggle" aria-pressed="false" disabled><i aria-hidden="true"></i><span>表面点云</span></button>
+        <button type="button" id="reset-camera">复位</button>
+      </div>
+      <div class="progress-readout"><b id="progress-value">00</b><span>/ 100</span></div>
+    </div>
+    <div id="loading" class="loading" role="status" aria-live="polite"><div class="loading-line"><span id="loading-fill"></span></div><p id="loading-text">正在读取雪山雕塑 · 0%</p><button type="button" id="retry" hidden>重试</button></div>
+    <div id="error" class="error" hidden><strong>无法读取模型</strong><span id="error-text">请确认 GLB 已放入 snow-benchmark/assets/。</span><button type="button" id="error-retry">重新读取</button></div>
+  </div>
+  <main class="scroll-rail" aria-label="滚动镜头轨道"><div id="top" aria-hidden="true"></div></main>
+  <noscript><p class="noscript">此查看器需要 JavaScript 才能载入 GLB 模型。</p></noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

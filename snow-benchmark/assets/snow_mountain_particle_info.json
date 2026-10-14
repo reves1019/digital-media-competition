@@ -1,0 +1,13 @@
+{
+  "sourceBlend": "C:\\Users\\吕梓乔\\Documents\\ChatGPT\\数字新媒体比赛\\snow-benchmark\\blender\\snow_mountain_sculpture.blend",
+  "outputBlend": "C:\\Users\\吕梓乔\\Documents\\ChatGPT\\数字新媒体比赛\\snow-benchmark\\blender\\snow_mountain_particle_sculpture.blend",
+  "baseParticles": 52000,
+  "whiteParticles": 37375,
+  "greyParticles": 14625,
+  "redFlagParticles": 744,
+  "rockTrianglesSampled": 95477,
+  "figureTrianglesSampled": 134860,
+  "engine": "BLENDER_EEVEE",
+  "materialDirection": "cool gray-white field with restrained vermilion particle flags",
+  "originalFilmHiddenFromRender": true
+}

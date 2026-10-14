@@ -1,0 +1,21 @@
+# Blender autosaves and temporary files
+*.blend1
+*.blend2
+*.blend3
+*.tmp
+*.temp
+
+# Generated logs and local previews
+*.log
+*.bak
+*.cache
+
+# Local tooling and OS files
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Local server/runtime output
+dist/
+.vite/
+coverage/
