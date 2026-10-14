@@ -19,3 +19,9 @@ Thumbs.db
 dist/
 .vite/
 coverage/
+
+# Python and Windows generated files
+__pycache__/
+*.pyc
+desktop.ini
+
